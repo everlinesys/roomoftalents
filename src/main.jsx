@@ -27,10 +27,10 @@ function App() {
     useEffect(() => { load() }, [category, location, search, sex, minAge, maxAge, minHeight, maxHeight, user?.role]);
     function auth(d) { const u = saveAuth(d); setUser(u); setModal(u.role === 'TALENT' ? 'profile' : 'dashboard'); setToast(u.role === 'TALENT' ? 'Build your profile to enter the room.' : 'Welcome back.'); }
     async function logout() { try { await api('/auth/logout', { method: 'POST', body: JSON.stringify({ refreshToken: localStorage.getItem('rot_refresh') }) }) } catch { } localStorage.clear(); setUser(null); setModal(null); load(); }
-    return <div className={`app ${sharedProfile ? 'has-shared-profile' : ''}`}><header className="nav auth-only"><a className="brand-lockup" href="/" aria-label="Room of Talents home"><img src="/logo.png" alt="" className="brand-mark" /><span className="logo">room<span>of</span>talents<span className="dot">.</span></span></a><div className="nav-actions">{user ? <button className="glass" onClick={() => setModal('dashboard')}>{user.name.split(' ')[0]} ↗</button> : <><button className="text-btn" onClick={() => setModal('login')}>Log in</button><button className="solid" onClick={() => setModal('register')}>Join the room ↗</button></>}</div></header>
+    return <div className={`app ${sharedProfile ? 'has-shared-profile' : ''}`}><header className="nav auth-only"><a className="brand-lockup" href="/" aria-label="Room of Talents home"><img src="/logo.png" alt="Room of Talents" className="brand-mark" /><span className="logo">room<span>of</span>talents<span className="dot">.</span></span></a><div className="nav-actions">{user ? <button className="glass" onClick={() => setModal('dashboard')}>{user.name.split(' ')[0]} ↗</button> : <><button className="text-btn" onClick={() => setModal('login')}>Log in</button><button className="solid" onClick={() => setModal('register')}>Join the room ↗</button></>}</div></header>
         <main id="top"><section id="discover" className="directory"><div className="directory-top"><div><div className="eyebrow">ROOM OF TALENTS / LIVE CASTING DIRECTORY</div><div className="directory-title"><h1>Walk into the <i>room of talents.</i></h1><p>Discover distinctive people, bold profiles, and talent ready for the next production.</p>
-            <div className="mobile-first-cards">{loading ? <MobileLoadingCards /> : profiles.slice(0, 9).map((p, i) => <TalentCard key={`mobile-${p.id}`} p={p} index={i} onClick={() => openProfile(p)} />)}</div>
-        </div></div></div>
+                <div className="mobile-first-cards">{loading ? <MobileLoadingCards /> : profiles.slice(0, 9).map((p, i) => <TalentCard key={`mobile-${p.id}`} p={p} index={i} onClick={() => openProfile(p)} />)}</div>
+                </div></div></div>
             <div className="public-search"><div className="search-main"><span aria-hidden="true">⌕</span><PlacePicker value={location} onChange={setLocation} /><div className="category-inline"><label htmlFor="public-category">Category</label><select id="public-category" value={category} onChange={e => setCategory(e.target.value)}><option value="">All categories</option>{CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div></div></div>
             {recruiter && (
                 <RecruiterFilters
@@ -93,7 +93,7 @@ function App() {
                 </div>
             )}</section>
         </main>
-        {sharedProfile && <div className="shared-profile-page"><div className="shared-profile-toolbar"><button className="glass toolbar-back" onClick={closeSharedProfile}>← <span>Back to discovery</span></button><div className="shared-toolbar-actions"><span className={`shared-membership-pill ${String(sharedProfile.membership || 'PRO').toLowerCase()}`}>✦ {sharedProfile.membership || 'PRO'}</span><button className="icon-button" aria-label="Share profile" title="Share profile" onClick={() => { if (navigator.share) navigator.share({ title: sharedProfile.displayName, text: `View ${sharedProfile.displayName} on RoomOfTalents`, url: window.location.href }); else { navigator.clipboard?.writeText(window.location.href).then(() => setToast('Profile link copied')).catch(() => setToast(window.location.href)); } }}>↗</button></div></div><ProfileView talent={sharedProfile} user={user} onLogin={() => setModal('login')} setToast={setToast} /></div>} {selected && <Modal title={selected.displayName} close={() => setSelected(null)} wide><ProfileView talent={selected} user={user} onLogin={() => { setSelected(null); setModal('login') }} setToast={setToast} /></Modal>}
+        {sharedProfile && <div className="shared-profile-page"><ProfileView talent={sharedProfile} user={user} onLogin={() => setModal('login')} setToast={setToast} /></div>} {selected && <Modal title={selected.displayName} close={() => setSelected(null)} wide><ProfileView talent={selected} user={user} onLogin={() => { setSelected(null); setModal('login') }} setToast={setToast} /></Modal>}
         {modal && <Modal title={modal === 'login' ? 'Welcome back' : modal === 'register' ? 'Join the room' : modal === 'profile' ? 'Your talent profile' : modal === 'subscribe' ? 'Choose your membership' : 'Command centre'} close={() => setModal(null)} wide={modal === 'dashboard'}><Form mode={modal} user={user} onAuth={auth} onLogout={logout} setToast={setToast} setModal={setModal} /></Modal>}{toast && <button className="toast" onClick={() => setToast('')}>{toast} ×</button>}<nav className="app-bottom-nav" aria-label="App navigation"><button className="bottom-nav-item active" onClick={() => document.getElementById('top')?.scrollIntoView({ behavior: 'smooth' })}><span className="nav-icon">⌂</span><span>Discover</span></button><button className="bottom-nav-item" onClick={() => setModal(user ? 'dashboard' : 'login')}><span className="nav-icon">◯</span><span>{user ? 'Account' : 'Sign in'}</span></button><button className="bottom-nav-item" onClick={() => setModal('register')}><span className="nav-icon">＋</span><span>Join</span></button></nav></div>
 }
 function PlacePicker({ value, onChange, required = false, disabled = false }) {
@@ -101,25 +101,66 @@ function PlacePicker({ value, onChange, required = false, disabled = false }) {
 }
 
 function RecruiterFilters(p) { return <div className="advanced"><div className="advanced-head"><div><span className="eyebrow">ELITE SEARCH</span><strong>Refine the room</strong></div><button className="text-btn" onClick={p.clear}>Clear filters</button></div><div className="advanced-grid"><input value={p.search} onChange={e => p.setSearch(e.target.value)} placeholder="Name, role, skill..." /><select value={p.sex} onChange={e => p.setSex(e.target.value)}><option value="">Any sex</option><option>Female</option><option>Male</option><option>Other</option></select><input type="number" value={p.minAge} onChange={e => p.setMinAge(e.target.value)} placeholder="Age from" /><input type="number" value={p.maxAge} onChange={e => p.setMaxAge(e.target.value)} placeholder="Age to" /><input type="number" value={p.minHeight} onChange={e => p.setMinHeight(e.target.value)} placeholder="Height from cm" /><input type="number" value={p.maxHeight} onChange={e => p.setMaxHeight(e.target.value)} placeholder="Height to cm" /></div></div> }
-function TalentCard({ p, index, onClick }) { const cover = (p.photos || [])[0] || p.imageUrl; const visuals = (p.photos || []).length || (p.imageUrl ? 1 : 0); const membership = p.membership === 'EXCLUSIVE' ? 'EXCLUSIVE' : p.membership === 'PRO' ? 'PRO' : ''; return <article className="talent-card" onClick={onClick} tabIndex="0" role="button" onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onClick()}><div className="photo">{cover ? <img src={cover} alt={p.displayName} onError={e => e.currentTarget.style.display = 'none'} /> : <div className="photo-fallback"><span>{initials(p.displayName)}</span></div>}<div className="photo-shade" /><div className="profile-badges">{membership && <span className={`profile-badge ${membership.toLowerCase()}`}>{membership}</span>}</div><span className="availability"><em /> Available</span><b className="card-arrow">↗</b><div className="card-index">{String(index + 1).padStart(2, '0')}</div><div className="photo-count">{visuals} {visuals === 1 ? 'image' : 'images'}</div><div className="card-bottomline"><span>{p.location || 'Location not listed'}</span><span>View profile</span></div></div><div className="talent-copy"><div><h3>{p.displayName}</h3><p>{p.professionalRole || 'Creative talent'}</p><span className="hero-card-location">⌖ {p.location || 'Location not listed'}</span></div><small>{p.age ? `${p.age} yrs` : 'Open to work'}</small></div><div className="tags">{(p.categories || []).slice(0, 2).map(c => <span key={c}>{c}</span>)}</div></article> }
+function TalentCard({ p, index, onClick }) { const cover = (p.photos || [])[0] || p.imageUrl; const visuals = (p.photos || []).length || (p.imageUrl ? 1 : 0); const membership = p.membership === 'EXCLUSIVE' ? 'EXCLUSIVE' : p.membership === 'PRO' ? 'PRO' : ''; return <article className="talent-card" onClick={onClick} tabIndex="0" role="button" onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onClick()}><div className="photo">{cover ? <img src={cover} alt={p.displayName} onError={e => e.currentTarget.style.display = 'none'} /> : <div className="photo-fallback"><span>{initials(p.displayName)}</span></div>}<div className="photo-shade" /><div className="profile-badges">{membership && <span className={`profile-badge ${membership.toLowerCase()}`}>{membership}</span>}</div><span className="availability"><em /> Available</span><b className="card-arrow">↗</b><div className="card-index">{String(index + 1).padStart(2, '0')}</div><div className="photo-count">{visuals} {visuals === 1 ? 'image' : 'images'}</div><div className="card-bottomline"><span>{p.location || 'Location not listed'}</span><span>View profile</span></div></div><div className="talent-copy"><div><h3>{p.displayName}</h3><p>{(p.categories || []).join(' · ') || 'Creative talent'}</p><span className="hero-card-location">⌖ {p.location || 'Location not listed'}</span></div><small>Open to work</small></div><div className="tags">{(p.categories || []).slice(0, 2).map(c => <span key={c}>{c}</span>)}</div></article> }
 function MobileLoadingCards() { return <>{[1, 2, 3].map(n => <div className="talent-card skeleton-card" key={n}><div className="photo skeleton" /><div className="talent-copy"><div><div className="skeleton-line wide" /><div className="skeleton-line" /><div className="skeleton-line short" /></div></div></div>)}</> }
 function videoMeta(url) {
-    try {
-        const u = new URL(url);
-        const yt = u.hostname.includes('youtube.com') || u.hostname.includes('youtu.be');
-        let id = '';
-        if (u.hostname.includes('youtu.be')) id = u.pathname.slice(1);
-        if (u.hostname.includes('youtube.com')) id = u.searchParams.get('v') || u.pathname.split('/').filter(Boolean).pop() || '';
-        return yt && id ? { thumbnail: `https://img.youtube.com/vi/${id}/hqdefault.jpg`, label: 'YouTube showreel' } : { thumbnail: '', label: u.hostname.replace('www.', '') };
-    } catch { return { thumbnail: '', label: 'Performance link' }; }
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace('www.','');
+    if (host.includes('youtube.com') || host === 'youtu.be') {
+      let id = host === 'youtu.be' ? u.pathname.slice(1) : (u.searchParams.get('v') || u.pathname.split('/').filter(Boolean).pop() || '');
+      return id ? { thumbnail: `https://img.youtube.com/vi/${id}/hqdefault.jpg`, label: 'YouTube showreel' } : { thumbnail: '', label: 'YouTube' };
+    }
+    if (host.includes('vimeo.com')) {
+      return { thumbnail: '', label: 'Vimeo showreel' };
+    }
+    return { thumbnail: '', label: host };
+  } catch { return { thumbnail: '', label: 'Performance link' }; }
 }
-
-function ProfileView({ talent, user, onLogin, setToast }) { const [contact, setContact] = useState(null); const [busy, setBusy] = useState(false); const visuals = (talent.photos || []).length ? talent.photos : (talent.imageUrl ? [talent.imageUrl] : []); async function reveal() { if (!user) { onLogin(); return } setBusy(true); try { const d = await api(`/talents/${talent.id}/contact`); setContact(d) } catch (e) { setToast(e.message) } finally { setBusy(false) } } return <div className="profile-view"><div className="profile-hero"><div className="profile-gallery">{visuals.length ? visuals.slice(0, 10).map((src, i) => <img key={`${src.slice(0, 20)}-${i}`} src={src} alt={`${talent.displayName} ${i + 1}`} />) : <div className="photo-fallback"><span>{initials(talent.displayName)}</span></div>}</div><div><div className="profile-view-heading"><div className="eyebrow">PROFILE / {talent.location}</div><span className={`profile-membership-label ${String(talent.membership || 'PRO').toLowerCase()}`}>✦ {talent.membership || 'PRO'}</span></div><h3>{talent.displayName}</h3><p className="role-line">{talent.professionalRole}</p><div className="tags">{(talent.categories || []).map(c => <span key={c}>{c}</span>)}</div></div></div><div className="profile-body"><p>{talent.bio || 'This talent has not added a biography yet.'}</p>{(talent.age || talent.sex || talent.heightCm) && <div className="facts">{talent.age && <span><b>{talent.age}</b> age</span>}{talent.sex && <span><b>{talent.sex}</b> sex</span>}{talent.heightCm && <span><b>{talent.heightCm} cm</b> height</span>}</div>}{(talent.skills || []).length > 0 && <div className="skill-row">{talent.skills.map(s => <span key={s}>{s}</span>)}</div>}{(talent.performanceLinks || []).length > 0 && <div className="performance-list"><div className="eyebrow">PERFORMANCE / SHOWREEL</div><div className="video-grid">{talent.performanceLinks.slice(0, 10).map((link, i) => { const meta = videoMeta(link); return <a className="video-card" key={`${link}-${i}`} href={link} target="_blank" rel="noreferrer"><div className="video-thumb">{meta.thumbnail ? <img src={meta.thumbnail} alt={`Performance ${i + 1}`} /> : <div className="video-thumb-fallback">▶</div>}<span className="play-badge">▶</span></div><div className="video-info"><strong>Performance {String(i + 1).padStart(2, '0')}</strong><span>{meta.label} ↗</span></div></a> })}</div></div>}<div className="contact-box"><div><span className="eyebrow">DIRECT CONTACT</span><strong>{contact ? `${contact.phone || 'No phone'} · ${contact.email}` : 'Available according to membership'}</strong></div><button className="solid" disabled={busy} onClick={reveal}>{contact ? 'Contact unlocked' : busy ? 'Checking…' : 'Reveal contact ↗'}</button></div><div className="profile-conversion"><span className="eyebrow">YOUR NEXT STEP</span><h4>Build a profile that gets discovered.</h4><p>Show your work, skills and identity in a professional public profile like this.</p><button className="solid" onClick={onLogin}>Create your profile ↗</button></div></div></div> }
+function ProfileView({ talent, user, onLogin, setToast }) {
+  const [contact, setContact] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const visuals = (talent.photos || []).length ? talent.photos : (talent.imageUrl ? [talent.imageUrl] : []);
+  const categories = (talent.categories || []).join(' · ');
+  const restricted = (talent.categories || []).some(c => ['actor','model','presenter'].includes(String(c).toLowerCase()));
+  async function shareProfile() {
+    const url = window.location.href;
+    try { if (navigator.share) await navigator.share({ title: talent.displayName, text: `View ${talent.displayName} on RoomOfTalents`, url }); else { await navigator.clipboard.writeText(url); setToast('Profile link copied'); } }
+    catch { setToast(url); }
+  }
+  async function reveal() {
+    if (!user) { onLogin(); return; }
+    setBusy(true);
+    try { const d = await api(`/talents/${talent.id}/contact`); setContact(d); }
+    catch (e) { setToast(e.message); } finally { setBusy(false); }
+  }
+  const call = contact?.phone ? `tel:${contact.phone}` : '';
+  const whatsapp = contact?.phone ? `https://wa.me/${String(contact.phone).replace(/\\D/g,'')}` : '';
+  return <div className="profile-view">
+    <div className="profile-hero">
+      <div className="profile-gallery">{visuals.length ? visuals.slice(0,10).map((src,i)=><img key={`${src.slice(0,20)}-${i}`} src={src} alt={`${talent.displayName} ${i+1}`} />) : <div className="photo-fallback"><span>{initials(talent.displayName)}</span></div>}</div>
+      <div>
+        <div className="profile-view-heading"><div className="eyebrow">PROFILE / {talent.location}</div><div className="profile-heading-actions">{talent.membership && <span className={`profile-badge profile-membership-badge ${String(talent.membership).toLowerCase()}`}>{talent.membership}</span>}<button type="button" className="icon-button profile-share-button" aria-label="Share profile" title="Share profile" onClick={shareProfile}>↗</button></div></div>
+        <h3>{talent.displayName}</h3>
+        <p className="role-line">{categories}</p>
+        <div className="tags">{(talent.categories||[]).map(c=><span key={c}>{c}</span>)}</div>
+      </div>
+    </div>
+    <div className="profile-body">
+      <p>{talent.bio || 'This talent has not added a biography yet.'}</p>
+      {restricted && (talent.age || talent.sex || talent.heightCm) && <div className="facts">{talent.age && <span><b>{talent.age}</b> age</span>}{talent.sex && <span><b>{talent.sex}</b> sex</span>}{talent.heightCm && <span><b>{talent.heightCm} cm</b> height</span>}</div>}
+      {(talent.skills||[]).length>0 && <div className="skill-row">{talent.skills.map(s=><span key={s}>{s}</span>)}</div>}
+      {(talent.performanceLinks||[]).length>0 && <div className="performance-list"><div className="eyebrow">PERFORMANCE / SHOWREEL</div><div className="video-grid">{talent.performanceLinks.slice(0,10).map((link,i)=>{const meta=videoMeta(link);return <a className="video-card" key={`${link}-${i}`} href={link} target="_blank" rel="noreferrer"><div className="video-thumb">{meta.thumbnail?<img src={meta.thumbnail} alt={`Performance ${i+1}`} />:<div className="video-thumb-fallback">▶</div>}<span className="play-badge">▶</span></div><div className="video-info"><strong>Performance {String(i+1).padStart(2,'0')}</strong><span>{meta.label} ↗</span></div></a>})}</div></div>}
+      <div className="contact-box"><div><span className="eyebrow">DIRECT CONTACT</span><strong>{contact ? `${contact.phone||'No phone'} · ${contact.email||'No email'}` : `Contact visible to PRO members, EXCLUSIVE members and hiring accounts`}</strong></div>{contact ? <div className="contact-actions">{contact.phone && <a className="solid" href={call}>Call</a>}{contact.phone && <a className="glass" href={whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>}{contact.email && <a className="glass" href={`mailto:${contact.email}`}>Email</a>}</div> : <button className="solid" disabled={busy} onClick={reveal}>{busy?'Checking…':'Reveal contact ↗'}</button>}</div>
+      <div className="profile-conversion"><span className="eyebrow">YOUR NEXT STEP</span><h4>Build a profile that gets discovered.</h4><p>Show your work, skills and identity in a professional public profile like this.</p><button className="solid" onClick={onLogin}>Create your profile ↗</button></div>
+    </div>
+  </div>;
+}
 function Plan({ name, price, note, features, onClick }) { return <div className="plan"><div className="eyebrow">{name}</div><div className="price">₹{price}<small>/year</small></div><p>{note}</p><ul>{features.map(f => <li key={f}>✓ {f}</li>)}</ul><button className="solid" onClick={onClick}>Get started ↗</button></div> }
 function Modal({ title, close, children, wide }) { return <div className="backdrop" onClick={close}><div className={`modal ${wide ? 'modal-wide' : ''}`} onClick={e => e.stopPropagation()}><button className="close" onClick={close}>×</button><div className="eyebrow">ROOMOFTALENTS.IN</div><h2>{title}</h2>{children}</div></div> }
 function Form({ mode, user, onAuth, onLogout, setToast, setModal }) {
     const [kind, setKind] = useState('TALENT'); const [editing, setEditing] = useState(false); const [loading, setLoading] = useState(false); const [error, setError] = useState(''); const [status, setStatus] = useState(null);
-    const [f, setF] = useState({ name: '', email: '', password: '', displayName: '', professionalRole: '', categories: [], location: '', age: '', sex: '', heightCm: '', bio: '', phone: '', portfolioUrl: '', imageUrl: '', photos: [], performanceLinks: [], skills: '' }); const set = (k, v) => setF(x => ({ ...x, [k]: v }));
+    const [f, setF] = useState({ name: '', email: '', password: '', displayName: '', categories: [], location: '', age: '', sex: '', heightCm: '', bio: '', phone: '', photos: [], performanceLinks: [], skills: '' }); const set = (k, v) => setF(x => ({ ...x, [k]: v }));
     useEffect(() => { if (mode === 'profile' && user) api('/talents/me').then(d => { if (d.talent) setF(x => ({ ...x, ...d.talent, photos: d.talent.photos || [], performanceLinks: d.talent.performanceLinks || [], skills: (d.talent.skills || []).join(',') })); setStatus(d) }).catch(e => setError(e.message)); }, [mode, user]);
     async function submit(e) { e.preventDefault(); setError(''); setLoading(true); try { let d; if (mode === 'login') d = await api('/auth/login', { method: 'POST', body: JSON.stringify({ email: f.email, password: f.password }) }); else if (mode === 'register') d = await api('/auth/register', { method: 'POST', body: JSON.stringify({ name: f.name, email: f.email, password: f.password, role: kind }) }); else if (mode === 'profile') d = await api('/talents', { method: 'POST', body: JSON.stringify({ ...f, age: f.age || null, heightCm: f.heightCm || null, skills: f.skills.split(',').map(x => x.trim()).filter(Boolean), categories: f.categories, photos: f.photos || [], performanceLinks: (f.performanceLinks || []).filter(Boolean) }) }); if (d?.user) onAuth(d); else { setStatus(d); setToast(d.message || 'Saved successfully.'); if (mode === 'profile' && !d.hasActivePro) setModal('subscribe'); } } catch (e) { setError(e.message) } finally { setLoading(false) } }
     async function subscribe(plan) { setLoading(true); setError(''); try { await loadRazorpay(); const order = await api('/subscriptions/order', { method: 'POST', body: JSON.stringify({ plan }) }); const payment = new window.Razorpay({ key: order.keyId, amount: order.amount, currency: order.currency, name: 'RoomOfTalents.in', description: plan === 'EXCLUSIVE' ? 'Talent Exclusive' : 'Talent PRO', order_id: order.orderId, prefill: { name: user?.name, email: user?.email }, handler: async response => { try { const d = await api('/subscriptions/verify', { method: 'POST', body: JSON.stringify(response) }); setToast(d.message); setModal('dashboard'); } catch (e) { setError(e.message) } }, modal: { ondismiss: () => setLoading(false) } }); payment.open(); } catch (e) { setError(e.message); setLoading(false) } }
@@ -127,189 +168,18 @@ function Form({ mode, user, onAuth, onLogout, setToast, setModal }) {
     if (mode === 'dashboard') return user?.role === 'SUPER_ADMIN' ? <AdminPanel setToast={setToast} onLogout={onLogout} /> : <div className="account"><div className="account-head"><div className="avatar">{initials(user?.name)}</div><div><span className="eyebrow">ACCOUNT</span><h3>{user?.name}</h3><p>{user?.email}</p></div><span className="pill">{user?.role}</span></div>{user?.role === 'TALENT' && <><button className="solid full" onClick={() => setModal('profile')}>Manage profile ↗</button><button className="glass full" onClick={() => setModal('subscribe')}>Manage membership ↗</button></>}{user?.role === 'RECRUITER' && <p className="account-note">Your recruiter account can use advanced filters directly on the talent directory. Upgrade to Elite to unlock eligible contact details.</p>}<button className="glass full" onClick={onLogout}>Log out</button></div>;
     if (mode === 'login') return <form onSubmit={submit}><Field label="Email"><input required type="email" value={f.email} onChange={e => set('email', e.target.value)} /></Field><Field label="Password"><input required type="password" value={f.password} onChange={e => set('password', e.target.value)} /></Field><Error text={error} /><button className="solid full" disabled={loading}>{loading ? 'Signing in…' : 'Log in ↗'}</button><div className="auth-divider"><span>or</span></div><button type="button" className="google-btn full" onClick={() => setError('Google login requires Google OAuth credentials and backend configuration.')}><span className="google-mark">G</span> Continue with Google</button><div className="auth-switch">New here? <button type="button" className="auth-link" onClick={() => { setError(''); setModal('register'); }}>Join / register</button></div></form>;
     if (mode === 'register') return <form onSubmit={submit}><Field label="Account type"><select value={kind} onChange={e => setKind(e.target.value)}><option value="TALENT">Talent</option><option value="RECRUITER">Recruiter / Production</option></select></Field><Field label="Full name"><input required value={f.name} onChange={e => set('name', e.target.value)} /></Field><Field label="Email"><input required type="email" value={f.email} onChange={e => set('email', e.target.value)} /></Field><Field label="Password"><input required minLength="8" type="password" value={f.password} onChange={e => set('password', e.target.value)} /></Field><Error text={error} /><button className="solid full" disabled={loading}>{loading ? 'Creating…' : 'Create account ↗'}</button></form>;
-    return (
-        <form className="profile-form" onSubmit={submit}>
-            <div className="form-intro">
-                <span className="eyebrow">YOUR CASTING PROFILE</span>
-                <p>
-                    {status?.hasActivePro
-                        ? "Your profile is live."
-                        : "Fill this once and your profile can become discoverable after you activate PRO."}
-                </p>
-
-                <button
-                    type="button"
-                    className="glass edit-profile-btn"
-                    onClick={() => setEditing((v) => !v)}
-                >
-                    {editing ? "Lock fields" : "Edit profile ↗"}
-                </button>
-            </div>
-
-            <div className="two-col">
-                <Field label="Display name">
-                    <input
-                        disabled={!editing}
-                        required
-                        value={f.displayName}
-                        onChange={(e) => set("displayName", e.target.value)}
-                    />
-                </Field>
-
-                <Field label="Professional role">
-                    <input
-                        disabled={!editing}
-                        required
-                        value={f.professionalRole}
-                        onChange={(e) => set("professionalRole", e.target.value)}
-                    />
-                </Field>
-            </div>
-
-            <Field label={`Categories (${f.categories.length}/3)`}>
-                <div className="category-picker">
-                    {CATEGORIES.map((c) => (
-                        <button
-                            type="button"
-                            key={c}
-                            className={f.categories.includes(c) ? "selected" : ""}
-                            disabled={
-                                !editing ||
-                                (!f.categories.includes(c) && f.categories.length >= 3)
-                            }
-                            onClick={() =>
-                                set(
-                                    "categories",
-                                    f.categories.includes(c)
-                                        ? f.categories.filter((x) => x !== c)
-                                        : [...f.categories, c]
-                                )
-                            }
-                        >
-                            {c}
-                        </button>
-                    ))}
-                </div>
-            </Field>
-
-            <div className="two-col">
-                <Field label="Location">
-                    <input
-                        type="text"
-                        placeholder="Enter your location"
-                        disabled={!editing}
-                        required
-                        value={f.location || ""}
-                        onChange={(e) => set("location", e.target.value)}
-                    />
-                </Field>
-
-                <Field label="Sex">
-                    <select
-                        disabled={!editing}
-                        value={f.sex || ""}
-                        onChange={(e) => set("sex", e.target.value)}
-                    >
-                        <option value="">Prefer not to say</option>
-                        <option>Female</option>
-                        <option>Male</option>
-                        <option>Other</option>
-                    </select>
-                </Field>
-
-                <Field label="Age">
-                    <input
-                        disabled={!editing}
-                        type="number"
-                        min="1"
-                        max="120"
-                        value={f.age || ""}
-                        onChange={(e) => set("age", e.target.value)}
-                    />
-                </Field>
-
-                <Field label="Height (cm, optional)">
-                    <input
-                        disabled={!editing}
-                        type="number"
-                        min="50"
-                        max="250"
-                        value={f.heightCm || ""}
-                        onChange={(e) => set("heightCm", e.target.value)}
-                    />
-                </Field>
-            </div>
-
-            <Field label="Bio">
-                <textarea
-                    disabled={!editing}
-                    value={f.bio || ""}
-                    onChange={(e) => set("bio", e.target.value)}
-                />
-            </Field>
-
-            <div className="two-col">
-                <Field label="Phone">
-                    <input
-                        disabled={!editing}
-                        value={f.phone || ""}
-                        onChange={(e) => set("phone", e.target.value)}
-                    />
-                </Field>
-
-                <Field label="Portfolio URL">
-                    <input
-                        disabled={!editing}
-                        type="url"
-                        value={f.portfolioUrl || ""}
-                        onChange={(e) => set("portfolioUrl", e.target.value)}
-                    />
-                </Field>
-            </div>
-
-            <div className="two-col">
-                <Field label="Profile image URL (optional fallback)">
-                    <input
-                        disabled={!editing}
-                        type="url"
-                        value={f.imageUrl || ""}
-                        onChange={(e) => set("imageUrl", e.target.value)}
-                        placeholder="https://..."
-                    />
-                </Field>
-
-                <Field label="Skills (comma separated)">
-                    <input
-                        disabled={!editing}
-                        value={f.skills || ""}
-                        onChange={(e) => set("skills", e.target.value)}
-                    />
-                </Field>
-            </div>
-
-            {/* Keep your existing photo upload and performance link fields here */}
-
-            <Error text={error} />
-
-            <button
-                type="submit"
-                className="solid full"
-                disabled={!editing || loading || f.categories.length < 1}
-            >
-                {loading ? "Saving…" : "Save profile ↗"}
-            </button>
-
-            {status?.hasActivePro === false && (
-                <button
-                    type="button"
-                    className="glass full"
-                    onClick={() => setModal("subscribe")}
-                >
-                    Activate PRO ↗
-                </button>
-            )}
-        </form>
-    );
+    const restricted = f.categories.some(c => ['actor','model','presenter'].includes(String(c).toLowerCase()));
+    return <form className="profile-form" onSubmit={submit}><div className="form-intro"><span className="eyebrow">YOUR CASTING PROFILE</span><p>{status?.hasActivePro ? 'Your profile is live.' : 'Activate PRO to become discoverable.'}</p><button type="button" className="glass edit-profile-btn" onClick={() => setEditing(v=>!v)}>{editing?'Lock fields':'Edit profile ↗'}</button></div>
+    <Field label="Display name"><input disabled={!editing} required value={f.displayName} onChange={e=>set('displayName',e.target.value)} /></Field>
+    <Field label={`Categories (${f.categories.length}/3)`}><div className="category-picker">{CATEGORIES.map(c=><button type="button" key={c} className={f.categories.includes(c)?'selected':''} disabled={!editing||(!f.categories.includes(c)&&f.categories.length>=3)} onClick={()=>set('categories',f.categories.includes(c)?f.categories.filter(x=>x!==c):[...f.categories,c])}>{c}</button>)}</div></Field>
+    <Field label="Location"><input type="text" required disabled={!editing} value={f.location||''} onChange={e=>set('location',e.target.value)} placeholder="City / district" /></Field>
+    {restricted && <div className="two-col"><Field label="Sex"><select disabled={!editing} value={f.sex||''} onChange={e=>set('sex',e.target.value)}><option value="">Prefer not to say</option><option>Female</option><option>Male</option><option>Other</option></select></Field><Field label="Age"><input disabled={!editing} type="number" min="1" max="120" value={f.age||''} onChange={e=>set('age',e.target.value)} /></Field><Field label="Height (cm)"><input disabled={!editing} type="number" min="50" max="250" value={f.heightCm||''} onChange={e=>set('heightCm',e.target.value)} /></Field></div>}
+    <Field label="Bio"><textarea disabled={!editing} value={f.bio||''} onChange={e=>set('bio',e.target.value)} /></Field>
+    <Field label="Phone"><input disabled={!editing} value={f.phone||''} onChange={e=>set('phone',e.target.value)} /></Field>
+    <Field label="Skills (comma separated)"><input disabled={!editing} value={f.skills||''} onChange={e=>set('skills',e.target.value)} /></Field>
+    <Field label={`Upload photos (${(f.photos||[]).length}/10)`}><input disabled={!editing||(f.photos||[]).length>=10} type="file" accept="image/*" multiple onChange={async e=>{const files=Array.from(e.target.files||[]).slice(0,10-(f.photos||[]).length);const data=await Promise.all(files.map(file=>new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const max=1400,scale=Math.min(1,max/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',.82));};img.src=reader.result;};reader.readAsDataURL(file);})));set('photos',[...(f.photos||[]),...data]);e.target.value='';}} /><div className="upload-grid">{(f.photos||[]).map((src,i)=><div className="upload-thumb" key={`${src.slice(0,20)}-${i}`}><img src={src} alt={`Uploaded ${i+1}`} /><button type="button" disabled={!editing} onClick={()=>set('photos',f.photos.filter((_,n)=>n!==i))}>×</button></div>)}</div></Field>
+    <Field label={`Performance / showreel links (${(f.performanceLinks||[]).length}/10)`}><div className="link-editor">{(f.performanceLinks||[]).map((link,i)=><div className="link-row" key={`${i}-${link}`}><input disabled={!editing} type="url" value={link} placeholder="https://youtube.com/... or https://vimeo.com/..." onChange={e=>set('performanceLinks',f.performanceLinks.map((v,n)=>n===i?e.target.value:v))}/><button type="button" disabled={!editing} className="glass" onClick={()=>set('performanceLinks',f.performanceLinks.filter((_,n)=>n!==i))}>Remove</button></div>)}{(f.performanceLinks||[]).length<10&&<button type="button" disabled={!editing} className="glass" onClick={()=>set('performanceLinks',[...(f.performanceLinks||[]),''])}>+ Add performance link</button>}</div></Field>
+    <Error text={error}/><button className="solid full" disabled={!editing||loading||f.categories.length<1}>{loading?'Saving…':'Save profile ↗'}</button>{status?.hasActivePro===false&&<button type="button" className="glass full" onClick={()=>setModal('subscribe')}>Activate PRO ↗</button>}</form>;
 }
 function AdminPanel({ setToast, onLogout }) {
     const [users, setUsers] = useState([]); const [loading, setLoading] = useState(true); const [working, setWorking] = useState(''); const [query, setQuery] = useState(''); const [role, setRole] = useState('ALL'); const [status, setStatus] = useState('ALL'); const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'TALENT' });
