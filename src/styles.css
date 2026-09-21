@@ -194,3 +194,177 @@ img { max-width: 100%; }
   .mobile-first-cards .skeleton-card .photo { min-height:88px !important; }
   .mobile-first-cards .skeleton-card .talent-copy { padding-top:8px; }
 }
+
+/* Final mobile-first discovery search: location and role query stay on one line. */
+.search-main {
+  display: grid !important;
+  grid-template-columns: 18px minmax(92px, .95fr) minmax(0, 1.45fr) 42px !important;
+  align-items: center !important;
+  gap: 7px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 7px 7px 7px 12px !important;
+  border-radius: 20px !important;
+  overflow: visible !important;
+}
+.search-main > span { font-size: 19px !important; line-height: 1 !important; }
+.search-main .place-picker { min-width: 0 !important; position: relative !important; }
+.search-main .place-picker > input,
+.search-main .talent-search {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  padding: 0 4px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  text-overflow: ellipsis !important;
+}
+.search-main .talent-search { border-left: 1px solid var(--line) !important; padding-left: 9px !important; }
+.search-main .search-submit {
+  width: 42px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 14px !important;
+  font-size: 20px !important;
+}
+.place-results {
+  position: absolute !important;
+  z-index: 80 !important;
+  top: calc(100% + 10px) !important;
+  left: -8px !important;
+  width: min(290px, 78vw) !important;
+  padding: 6px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.14) !important;
+}
+.place-results button { display: block !important; width: 100% !important; text-align: left !important; padding: 10px !important; border: 0 !important; border-radius: 10px !important; background: transparent !important; font-size: 13px !important; color: var(--ink) !important; }
+.place-results button:hover { background: #f2f4f7 !important; }
+.place-results small { display: block !important; margin-top: 3px !important; color: var(--muted) !important; font-size: 10px !important; }
+.place-hint { padding: 12px !important; font-size: 12px !important; color: var(--muted) !important; }
+@media (max-width: 380px) {
+  .search-main { grid-template-columns: 15px minmax(78px, .9fr) minmax(0, 1.5fr) 38px !important; gap: 5px !important; padding-left: 9px !important; }
+  .search-main .place-picker > input, .search-main .talent-search { font-size: 11px !important; }
+  .search-main .talent-search { padding-left: 6px !important; }
+  .search-main .search-submit { width: 38px !important; height: 40px !important; min-height: 40px !important; }
+}
+
+/* App-like motion and persistent bottom navigation */
+.app { min-height: 100dvh; padding-bottom: 86px; }
+.directory, .directory-top, .public-search, .mobile-first-cards, .empty { animation: appFadeUp .55s cubic-bezier(.2,.8,.2,1) both; }
+.directory-top { animation-delay: .04s; }
+.public-search { animation-delay: .10s; }
+.mobile-first-cards { animation-delay: .16s; }
+.talent-card { transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+.talent-card:active { transform: scale(.975); }
+.talent-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.backdrop { animation: backdropIn .2s ease both; }
+.modal { animation: sheetIn .34s cubic-bezier(.2,.8,.2,1) both; transform-origin: bottom center; }
+.toast { animation: toastIn .28s cubic-bezier(.2,.8,.2,1) both; }
+
+.app-bottom-nav {
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 10px max(12px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-right));
+  background: rgba(255,255,255,.94);
+  border-top: 1px solid rgba(20,24,32,.08);
+  box-shadow: 0 -10px 35px rgba(20,24,32,.08);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+.bottom-nav-item {
+  min-width: 0;
+  min-height: 54px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: #7a8390;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.bottom-nav-item:active { transform: scale(.94); }
+.bottom-nav-item.active { color: var(--accent, #ff5d4f); background: rgba(255,93,79,.08); }
+.nav-icon { font-size: 23px; line-height: 1; font-weight: 500; }
+.bottom-nav-item:focus-visible { outline: 3px solid var(--accent, #ff5d4f); outline-offset: 2px; }
+
+@keyframes appFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sheetIn { from { opacity: 0; transform: translateY(22px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (min-width: 721px) {
+  .app { padding-bottom: 24px; }
+  .app-bottom-nav { left: 50%; right: auto; bottom: 18px; width: min(430px, calc(100% - 36px)); transform: translateX(-50%); border: 1px solid rgba(20,24,32,.08); border-radius: 24px; padding: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .directory, .directory-top, .public-search, .mobile-first-cards, .empty, .backdrop, .modal, .toast { animation: none !important; }
+  .talent-card, .bottom-nav-item { transition: none !important; }
+}
+
+/* UX refinement: restrained desktop scale and clearer discovery search */
+.directory { max-width: 1440px; margin: 0 auto; padding: 46px clamp(22px, 4vw, 64px) 72px; }
+.directory-top { max-width: 1180px; margin-inline: auto; }
+.directory-title h1 { font-size: clamp(44px, 6.2vw, 88px); line-height: .92; max-width: 860px; }
+.directory-title p { max-width: 390px; font-size: 13px; }
+.live-count strong { font-size: clamp(44px, 5vw, 64px); }
+.public-search { max-width: 1180px; margin-inline: auto; grid-template-columns: minmax(0, 1fr) 210px; gap: 12px; }
+.search-main { min-height: 58px; gap: 12px; padding: 7px 8px 7px 18px; }
+.search-main .place-picker { flex: 0 1 235px; min-width: 150px; }
+.search-main .talent-search { flex: 1 1 260px; min-width: 120px; }
+.search-main .place-picker::after { content: 'CITY / DISTRICT'; position: absolute; top: -7px; left: 2px; transform: translateY(-100%); font: 9px 'DM Mono', monospace; color: var(--muted); letter-spacing: .05em; pointer-events: none; }
+.search-main .talent-search { border-left: 1px solid var(--line); padding-left: 15px; }
+.search-main .talent-search::placeholder { color: #77736d; }
+.search-submit { min-width: 78px; }
+.cards { max-width: 1180px; margin-inline: auto; gap: 16px; }
+.talent-card { flex-basis: clamp(238px, 22vw, 310px); }
+.photo { height: clamp(330px, 31vw, 455px); border-radius: 18px; }
+.talent-copy h3 { font-size: 18px; }
+.talent-copy p { font-size: 12px; }
+.directory-bar { max-width: 1180px; margin-inline: auto; }
+.empty { max-width: 1180px; margin-inline: auto; }
+
+@media (min-width: 721px) {
+  .mobile-first-cards { display: none; }
+  .directory-title { max-width: 920px; }
+  .directory-top { align-items: end; }
+  .search-main > span { font-size: 22px; }
+}
+
+@media (max-width: 720px) {
+  .directory { padding: 26px 12px 48px; }
+  .directory-title h1 { font-size: clamp(42px, 12vw, 62px); max-width: 100%; }
+  .directory-title p { font-size: 12px; max-width: 310px; }
+  .public-search { display: block; }
+  .search-main { min-height: 58px; gap: 6px; padding: 6px; }
+  .search-main > span { display: none; }
+  .search-main .place-picker { flex: 0 1 42%; min-width: 0; }
+  .search-main .talent-search { flex: 1 1 auto; min-width: 0; padding-left: 9px !important; }
+  .search-main .place-picker::after { display: none; }
+  .search-main .place-picker > input, .search-main .talent-search { font-size: 12px !important; }
+  .search-main .search-submit { min-width: 42px; width: 42px; }
+  .category-control { margin-top: 8px; min-height: 48px; }
+  .cards { gap: 12px; }
+  .talent-card { flex-basis: min(78vw, 290px); }
+  .photo { height: 350px; }
+}
