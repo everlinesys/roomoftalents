@@ -167,3 +167,30 @@ img { max-width: 100%; }
 
 .profile-badges{position:absolute;top:14px;left:14px;display:flex;gap:6px;z-index:2}.profile-badge{padding:7px 9px;border-radius:999px;font-family:'DM Mono',monospace;font-size:9px;font-weight:800;letter-spacing:.05em;backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.4);color:#151515;background:rgba(255,255,255,.88)}.profile-badge.pro{background:#d9ff4f}.profile-badge.exclusive{background:#ffb4e8}.profile-badges + .availability{left:auto;right:14px}
 .place-picker{position:relative;width:100%}.place-results{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #ddd;border-radius:16px;box-shadow:0 14px 35px rgba(0,0,0,.12);padding:6px;max-height:260px;overflow:auto}.place-results button{display:flex;flex-direction:column;align-items:flex-start;width:100%;padding:12px;border:0;background:transparent;border-radius:10px;text-align:left;font:inherit}.place-results button:hover{background:#f2f2f2}.place-results small{font-size:12px;color:#777;margin-top:3px}.place-hint{padding:12px;font-size:13px;color:#666}
+
+/* HERO DISCOVERY STRIP — app-like, readable and information-rich */
+.hero-card-location { display:block; margin-top:4px; color:#69717c; font-size:10px; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.skeleton-card { pointer-events:none; }
+.skeleton { background:linear-gradient(100deg,#e6e8eb 20%,#f7f8f9 40%,#e6e8eb 60%); background-size:200% 100%; animation:skeletonShimmer 1.35s ease-in-out infinite; }
+.skeleton-line { width:78px; height:7px; border-radius:999px; background:linear-gradient(100deg,#e6e8eb 20%,#f7f8f9 40%,#e6e8eb 60%); background-size:200% 100%; animation:skeletonShimmer 1.35s ease-in-out infinite; margin-top:7px; }
+.skeleton-line.wide { width:92px; height:10px; margin-top:0; }
+.skeleton-line.short { width:48px; }
+@keyframes skeletonShimmer { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+@media (max-width:720px) {
+  .mobile-first-cards { align-items:flex-start; gap:9px; margin-top:22px; padding-bottom:10px; }
+  .mobile-first-cards .talent-card { flex:0 0 calc((100% - 18px)/3) !important; width:calc((100% - 18px)/3); min-width:0; background:#fff; border:1px solid #e4e6e9; border-radius:16px; padding:6px 6px 9px; box-shadow:0 5px 18px rgba(24,30,40,.05); }
+  .mobile-first-cards .photo { height:31vw !important; min-height:88px !important; max-height:125px !important; border-radius:11px !important; }
+  .mobile-first-cards .profile-badges { top:6px; left:6px; gap:3px; }
+  .mobile-first-cards .profile-badge { font-size:7px; padding:4px 5px; border:0; letter-spacing:.02em; }
+  .mobile-first-cards .availability, .mobile-first-cards .card-arrow, .mobile-first-cards .card-index, .mobile-first-cards .photo-count, .mobile-first-cards .card-bottomline { display:none !important; }
+  .mobile-first-cards .talent-copy { padding:8px 1px 0; display:block; min-width:0; }
+  .mobile-first-cards .talent-copy h3 { font-size:11px !important; line-height:1.18 !important; letter-spacing:-.03em !important; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mobile-first-cards .talent-copy p { display:block !important; font-size:10px !important; line-height:1.2 !important; margin:4px 0 0; color:#303640; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mobile-first-cards .hero-card-location { font-size:9px; }
+  .mobile-first-cards .talent-copy small { display:none !important; }
+  .mobile-first-cards .tags { display:flex !important; gap:3px; margin-top:6px; overflow:hidden; }
+  .mobile-first-cards .tags span { display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:3px 5px; border:1px solid #e5e7eb; border-radius:999px; font-size:8px !important; line-height:1.1; color:#5f6670; background:#fafafa; }
+  .mobile-first-cards .skeleton-card { padding:6px; }
+  .mobile-first-cards .skeleton-card .photo { min-height:88px !important; }
+  .mobile-first-cards .skeleton-card .talent-copy { padding-top:8px; }
+}
