@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
-const API = import.meta.env.VITE_API_URL ;
+const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 const CATEGORIES = ['Actor', 'Model', 'Presenter', 'Singer', 'Musician', 'Filmmaker', 'Voice artist', 'Dancer', 'Photographer', 'Editor', 'Writer'];
 const PUBLIC_FILTERS = ['All categories', ...CATEGORIES];
 const PLACES_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY || '';
@@ -27,7 +27,7 @@ function App() {
         <main id="top"><section id="discover" className="directory"><div className="directory-top"><div><div className="eyebrow">ROOM OF TALENTS / LIVE CASTING DIRECTORY</div><div className="directory-title"><h1>Walk into the <i>room of talents.</i></h1><p>Discover distinctive people, bold profiles, and talent ready for the next production.</p>
                 <div className="mobile-first-cards">{loading ? <MobileLoadingCards /> : profiles.slice(0, 9).map((p, i) => <TalentCard key={`mobile-${p.id}`} p={p} index={i} onClick={() => setSelected(p)} />)}</div>
                 </div></div><div className="live-count"><strong>{String(profiles.length).padStart(2, '0')}</strong><span>visible talents</span></div></div>
-            <div className="public-search"><div className="search-main"><span aria-hidden="true">⌕</span><PlacePicker value={location} onChange={setLocation} /><input className="talent-search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search role or talent…" aria-label="Search by talent or role" /><button className="solid search-submit" onClick={load} aria-label="Find talent">Find ↗</button></div><div className="category-control"><label htmlFor="public-category">Category</label><select id="public-category" value={category} onChange={e => setCategory(e.target.value)}><option value="">All categories</option>{CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div></div>
+            <div className="public-search"><div className="search-main"><span aria-hidden="true">⌕</span><PlacePicker value={location} onChange={setLocation} /><div className="category-inline"><label htmlFor="public-category">Category</label><select id="public-category" value={category} onChange={e => setCategory(e.target.value)}><option value="">All categories</option>{CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div></div></div>
             {recruiter && (
                 <RecruiterFilters
                     search={search}
