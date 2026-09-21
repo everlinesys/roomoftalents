@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
-const API = import.meta.env.VITE_API_URL || 'https://roomoftalentsapi.everlinesystems.in/api';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 const CATEGORIES = ['Actors', 'Models', 'Presenters', 'Musicians', 'Filmmakers', 'Voice Artists', 'Dancers', 'Photographers', 'Editors', 'Writers'];
 const PUBLIC_FILTERS = ['All categories', ...CATEGORIES];
 

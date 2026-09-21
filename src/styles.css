@@ -79,3 +79,27 @@ html{font-size:16px;overflow-x:hidden}body{background:var(--ios-bg);color:var(--
   .empty h2{font-size:clamp(36px,10vw,52px)!important;line-height:1!important}
   .empty p{font-size:16px!important;line-height:1.5!important}
 }
+
+/* FINAL MOBILE FOUNDATION */
+html, body, #root { width: 100%; min-width: 0; }
+body { overflow-x: hidden; }
+img { max-width: 100%; }
+@media (max-width: 720px) {
+  .app { width: 100%; min-width: 0; }
+  .directory { width: 100%; max-width: 100%; }
+  .directory-top { display: block; }
+  .live-count { display: none; }
+  .directory-title h1 { font-size: clamp(42px, 12.5vw, 66px) !important; max-width: 100%; }
+  .directory-title p { font-size: 17px !important; max-width: 34rem; }
+  .public-search { display: flex !important; flex-direction: column; width: 100%; max-width: 100%; }
+  .search-main { width: 100%; display: flex !important; flex-wrap: wrap; border-radius: 20px !important; }
+  .search-main input { flex: 1 1 120px; min-width: 0; }
+  .search-main .solid { flex: 1 0 100%; width: 100%; margin-top: 6px; }
+  .category-control { width: 100%; border-radius: 18px !important; }
+  .cards { width: calc(100% + 18px); padding-right: 18px; }
+  .talent-card { flex: 0 0 calc(100vw - 36px) !important; }
+  .photo { height: min(112vw, 500px) !important; min-height: 0 !important; }
+  .empty { width: 100%; }
+  .nav.auth-only { position: absolute !important; }
+  .nav.auth-only .nav-actions button { min-height: 44px !important; font-size: 14px !important; }
+}
