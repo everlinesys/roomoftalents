@@ -103,3 +103,64 @@ img { max-width: 100%; }
   .nav.auth-only { position: absolute !important; }
   .nav.auth-only .nav-actions button { min-height: 44px !important; font-size: 14px !important; }
 }
+
+.auth-switch{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:22px;color:var(--muted);font-size:15px;line-height:1.5;text-align:center}.auth-link{border:0;background:transparent;color:var(--ink);font:inherit;font-weight:800;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:8px 4px}.auth-link:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:8px}
+@media(max-width:720px){.auth-switch{font-size:16px;margin-top:24px}.auth-link{font-size:16px;min-height:44px}}
+
+/* MOBILE-FIRST TALENT STRIP: visible in the first screen, three cards across */
+.mobile-first-cards { display: none; }
+@media (max-width: 720px) {
+  .mobile-first-cards {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin: 24px -2px 4px 0;
+    padding: 2px 2px 6px 0;
+    width: calc(100% + 2px);
+  }
+  .mobile-first-cards .talent-card {
+    min-width: 0;
+    width: calc((100% - 16px) / 3);
+    flex: 0 0 calc((100% - 16px) / 3) !important;
+    scroll-snap-align: start;
+    overflow: hidden;
+    animation: mobileTalentIn .45s ease both;
+  }
+  .mobile-first-cards .photo {
+    height: 31vw !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    border-radius: 14px !important;
+  }
+  .mobile-first-cards .availability,
+  .mobile-first-cards .card-arrow,
+  .mobile-first-cards .card-index,
+  .mobile-first-cards .photo-count,
+  .mobile-first-cards .card-bottomline,
+  .mobile-first-cards .tags,
+  .mobile-first-cards .talent-copy p,
+  .mobile-first-cards .talent-copy small { display: none !important; }
+  .mobile-first-cards .talent-copy {
+    display: block;
+    padding: 8px 1px 0;
+  }
+  .mobile-first-cards .talent-copy h3 {
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+    letter-spacing: -.035em !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mobile-first-cards .cards { display: none; }
+  .directory > .cards { margin-top: 18px; }
+  .directory > .cards { display: none; }
+  .directory-title h1 { margin-bottom: 14px !important; }
+  .directory-title p { font-size: 15px !important; line-height: 1.4 !important; }
+  .public-search { margin-top: 18px !important; }
+}
+
+@keyframes mobileTalentIn { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .mobile-first-cards .talent-card { animation: none; } }
